@@ -999,22 +999,30 @@ void R_CullDecalProjectors(void)
 			continue;
 		}
 
-		// put all active projectors at the beginning
-		if (tr.refdef.numDecalProjectors > 32 && dp != &tr.refdef.decalProjectors[numDecalProjectors])
+		if (tr.refdef.numDecalProjectors > 32)
 		{
-			// swap them
-			temp                                          = tr.refdef.decalProjectors[numDecalProjectors];
-			tr.refdef.decalProjectors[numDecalProjectors] = *dp;
-			*dp                                           = temp;
+			// put all active projectors at the beginning
+			if (dp != &tr.refdef.decalProjectors[numDecalProjectors])
+			{
+				// swap them
+				temp                                          = tr.refdef.decalProjectors[numDecalProjectors];
+				tr.refdef.decalProjectors[numDecalProjectors] = *dp;
+				*dp                                           = temp;
+			}
+
+			decalBits |= (1 << numDecalProjectors);
+			numDecalProjectors++;
+
+			// bitmask limit
+			if (numDecalProjectors == 32)
+			{
+				break;
+			}
 		}
-
-		decalBits |= (1 << numDecalProjectors);
-		numDecalProjectors++;
-
-		// bitmask limit
-		if (numDecalProjectors == 32)
+		else
 		{
-			break;
+			decalBits |= (1 << i);
+			numDecalProjectors = i + 1;
 		}
 	}
 
